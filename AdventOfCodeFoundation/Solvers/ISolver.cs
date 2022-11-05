@@ -1,4 +1,5 @@
 ﻿using AdventOfCodeFoundation.IO;
+using System.Diagnostics;
 
 namespace AdventOfCodeFoundation.Solvers
 {
@@ -18,10 +19,13 @@ namespace AdventOfCodeFoundation.Solvers
 
         private async Task SolvePart(int part, Input input)
         {
-            Output.Line($"Solving part {part}...");
+            var stopwatch = new Stopwatch();
+            Output.Line($"Solving part {part}...");            
+            stopwatch.Start();
             var res = await (part == 1 ? SolvePartOne(input) : SolvePartTwo(input));
-            Output.Line($"Solved part {part} with result:\n{res}\n");
-
+            stopwatch.Stop();
+            Output.Line($"Solved part {part} in {stopwatch.ElapsedMilliseconds}ms");
+            Output.Line($"Result: {res}\n");
         }
     }
 }
