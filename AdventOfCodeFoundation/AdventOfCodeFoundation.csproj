@@ -9,7 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Input\" />
+    <Folder Include="Input\2022\" />
+    <Folder Include="Input\2020\" />
   </ItemGroup>
 
 </Project>

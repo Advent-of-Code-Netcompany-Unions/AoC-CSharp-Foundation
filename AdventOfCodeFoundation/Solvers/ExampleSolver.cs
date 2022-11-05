@@ -7,12 +7,12 @@ namespace UnionsAoCFoundation.Solvers
     {
         public Task<string> SolvePartOne(IEnumerable<string> inputLines)
         {
-            return Task.FromResult("World!");            
+            return Task.FromResult("Hello, ");            
         }
 
         public async Task<string> SolvePartTwo(IEnumerable<string> inputLines)
         {
-            return await Task.Run(() => "Hello, ");
+            return await Task.Run(() => "World!");
         }
     }
 }

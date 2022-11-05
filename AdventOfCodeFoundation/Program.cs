@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using AdventOfCodeFoundation.Plumbing;
+using System.Reflection;
 using UnionsAoCFoundation.Plumbing;
 
 namespace AdventOfCodeFoundation
@@ -6,12 +7,56 @@ namespace AdventOfCodeFoundation
     internal class Program
     {
         static async Task Main(string[] args)
-        {
-            foreach (var solver in GetSolvers(DateOnly.FromDateTime(new DateTime(2022, 11, 1))))
+        {           
+            if (args.Intersect(new[] {"?", "h", "-h", "--h", "help", "-help", "--help" }).Any())
             {
-                Console.Write(await solver.SolvePartOne(null));
-                Console.Write(await solver.SolvePartTwo(null));
+                Output.Help();
+                return;
+            }            
+
+            var challengeDate = GetChallengeDate(args);
+            var solvers = GetSolvers(challengeDate);
+
+            Output.Line($"Found {solvers.Count()} solvers for {challengeDate}...");
+
+            foreach (var solver in solvers)
+            {
+                Output.Line($"Solving {challengeDate} with {solver.GetType().Name}...");
+                Output.Line($"Solving part 1...");
+                Output.Line(await solver.SolvePartOne(null));
+
+                Output.Line($"Solving part 2...");
+                Output.Line(await solver.SolvePartTwo(null));
             }
+        }
+
+        private static DateOnly GetChallengeDate(string[] args)
+        {           
+            var today = DateTime.Today;
+            if (args.Any())
+            {
+                if (args.Length > 1)
+                {
+                    Output.Warning($"Multiple arguments provided. Ignoring all arguments after '{args[0]}'...");
+                }
+
+                if (int.TryParse(args[0], out var day) && day > 0 && day < 31)
+                {
+                    return new DateOnly(today.Year, today.Month, day);
+                }
+
+                if (DateOnly.TryParse(args[0], out var date))
+                {
+                    return date;
+                }
+
+                if (DateTime.TryParse(args[0], out var datetime))
+                {
+                    return DateOnly.FromDateTime(datetime);
+                }
+            }
+
+            return DateOnly.FromDateTime(today);
         }
 
         private static IEnumerable<ISolver> GetSolvers(DateOnly challengeDate)
