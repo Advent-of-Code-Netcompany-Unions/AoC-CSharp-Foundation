@@ -1,4 +1,4 @@
-﻿using AdventOfCodeFoundation.Plumbing;
+﻿using AdventOfCodeFoundation.IO;
 using System.Reflection;
 using UnionsAoCFoundation.Plumbing;
 
@@ -22,11 +22,13 @@ namespace AdventOfCodeFoundation
             foreach (var solver in solvers)
             {
                 Output.Line($"Solving {challengeDate} with {solver.GetType().Name}...");
+                var input = new Input(challengeDate);
+
                 Output.Line($"Solving part 1...");
-                Output.Line(await solver.SolvePartOne(null));
+                Output.Line(await solver.SolvePartOne(input));
 
                 Output.Line($"Solving part 2...");
-                Output.Line(await solver.SolvePartTwo(null));
+                Output.Line(await solver.SolvePartTwo(input));
             }
         }
 

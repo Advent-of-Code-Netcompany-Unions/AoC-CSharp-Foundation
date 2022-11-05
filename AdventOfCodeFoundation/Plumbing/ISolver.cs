@@ -1,10 +1,10 @@
-﻿using System.Reflection;
+﻿using AdventOfCodeFoundation.IO;
 
 namespace UnionsAoCFoundation.Plumbing
 {
     internal interface ISolver
     {
-        public Task<string> SolvePartOne(IEnumerable<string> inputLines);
-        public Task<string> SolvePartTwo(IEnumerable<string> inputLines);
+        public Task<string> SolvePartOne(Input input);
+        public Task<string> SolvePartTwo(Input input);
     }
 }

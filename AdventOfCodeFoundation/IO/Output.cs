@@ -1,4 +1,4 @@
-﻿namespace AdventOfCodeFoundation.Plumbing
+﻿namespace AdventOfCodeFoundation.IO
 {
     public static class Output
     {
