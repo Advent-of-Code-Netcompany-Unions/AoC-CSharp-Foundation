@@ -21,44 +21,64 @@ namespace AdventOfCodeFoundation
 
             foreach (var solver in solvers)
             {
-                Output.Line($"Solving {challengeDate} with {solver.GetType().Name}...");
-                var input = new Input(challengeDate);
-
-                Output.Line($"Solving part 1...");
-                Output.Line(await solver.SolvePartOne(input));
-
-                Output.Line($"Solving part 2...");
-                Output.Line(await solver.SolvePartTwo(input));
+                Output.Line($"Solving {challengeDate} with {solver.GetType().Name}...\n");                
+                await RunSolver(solver, challengeDate);
             }
         }
 
+        private static async Task RunSolver(ISolver solver, DateOnly challengeDate)
+        {            
+            var input = new Input(challengeDate);            
+
+            Output.Line($"Solving part 1...");
+            var res = await solver.SolvePartOne(input);
+            Output.Line($"Solved part 1 with result:\n{res}\n");            
+
+            Output.Line($"Solving part 2...");
+            res = await solver.SolvePartTwo(input);
+            Output.Line($"Solved part 2 with result:\n{res}\n");            
+        }
+
         private static DateOnly GetChallengeDate(string[] args)
-        {           
+        {
+            var today = DateOnly.FromDateTime(DateTime.Today);
+
+            if(!args.Any())
+                return today;
+
+            if (args.Length > 1)
+                Output.Warning($"Multiple arguments provided. Ignoring all arguments after '{args[0]}'...");
+
+            var date = TryParseInt(args[0]) ?? TryParseDateOnly(args[0]) ?? TryParseDateTime(args[0]);
+            if (!date.HasValue)
+                throw new ArgumentException($"Could not parse argument {args[0]}.");
+
+            return today;
+        }
+
+        private static DateOnly? TryParseInt(string arg)
+        {
             var today = DateTime.Today;
-            if (args.Any())
-            {
-                if (args.Length > 1)
-                {
-                    Output.Warning($"Multiple arguments provided. Ignoring all arguments after '{args[0]}'...");
-                }
+            if (int.TryParse(arg, out var day) && day > 0 && day < 31)
+                return new DateOnly(today.Year, today.Month, day);
 
-                if (int.TryParse(args[0], out var day) && day > 0 && day < 31)
-                {
-                    return new DateOnly(today.Year, today.Month, day);
-                }
+            return null;
+        }
 
-                if (DateOnly.TryParse(args[0], out var date))
-                {
-                    return date;
-                }
+        private static DateOnly? TryParseDateOnly(string arg)
+        {
+            if (DateOnly.TryParse(arg, out var date))
+                return date;
 
-                if (DateTime.TryParse(args[0], out var datetime))
-                {
-                    return DateOnly.FromDateTime(datetime);
-                }
-            }
+            return null;
+        }
 
-            return DateOnly.FromDateTime(today);
+        private static DateOnly? TryParseDateTime(string arg)
+        {
+            if (DateTime.TryParse(arg, out var datetime))
+                return DateOnly.FromDateTime(datetime);
+
+            return null;
         }
 
         private static IEnumerable<ISolver> GetSolvers(DateOnly challengeDate)

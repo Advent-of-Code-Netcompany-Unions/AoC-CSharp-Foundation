@@ -11,7 +11,7 @@
 
         public Input(DateOnly challengeDate)
         {
-            file = $"../../../Inputs/{challengeDate.Year}/{challengeDate.Day}";
+            file = $"../../../Inputs/{challengeDate.Year}/{challengeDate.Day:D2}/input.txt";
         }
 
         public async Task<string> GetRawInput()
