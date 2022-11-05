@@ -1,14 +1,13 @@
 ﻿using AdventOfCodeFoundation.IO;
-using UnionsAoCFoundation.Plumbing;
 
-namespace UnionsAoCFoundation.Solvers
+namespace AdventOfCodeFoundation.Solvers
 {
-    [SolvesChallenge("2022-11-01")]
+    [Solves("2022-11-01")]
     public class ExampleSolver : ISolver
     {
         public Task<string> SolvePartOne(Input _)
         {
-            return Task.FromResult("Hello, ");            
+            return Task.FromResult("Hello, ");
         }
 
         public async Task<string> SolvePartTwo(Input _)

@@ -1,91 +1,82 @@
 ﻿using AdventOfCodeFoundation.IO;
+using AdventOfCodeFoundation.Solvers;
 using System.Reflection;
-using UnionsAoCFoundation.Plumbing;
 
 namespace AdventOfCodeFoundation
 {
     internal class Program
     {
         static async Task Main(string[] args)
-        {           
-            if (args.Intersect(new[] {"?", "h", "-h", "--h", "help", "-help", "--help" }).Any())
-            {
-                Output.Help();
+        {
+            if (CheckHelp(args))                         
                 return;
-            }            
 
             var challengeDate = GetChallengeDate(args);
             var solvers = GetSolvers(challengeDate);
 
-            Output.Line($"Found {solvers.Count()} solvers for {challengeDate}...");
-
-            foreach (var solver in solvers)
-            {
-                Output.Line($"Solving {challengeDate} with {solver.GetType().Name}...\n");                
-                await RunSolver(solver, challengeDate);
-            }
-        }
-
-        private static async Task RunSolver(ISolver solver, DateOnly challengeDate)
-        {            
-            var input = new Input(challengeDate);            
-
-            Output.Line($"Solving part 1...");
-            var res = await solver.SolvePartOne(input);
-            Output.Line($"Solved part 1 with result:\n{res}\n");            
-
-            Output.Line($"Solving part 2...");
-            res = await solver.SolvePartTwo(input);
-            Output.Line($"Solved part 2 with result:\n{res}\n");            
+            await Task.WhenAll(solvers.Select(async solver => await solver.Run(challengeDate)));       
         }
 
         private static DateOnly GetChallengeDate(string[] args)
+        {          
+            if (args.Any())
+            {
+                if (args.Length > 1)
+                    Output.Warning($"Multiple arguments provided. Ignoring all arguments after '{args[0]}'...");
+
+                return ParseArgument(args[0]);
+            }                
+
+            return DateOnly.FromDateTime(DateTime.Today);
+        }
+
+        private static bool CheckHelp(string[] args)
         {
-            var today = DateOnly.FromDateTime(DateTime.Today);
+            var shouldPrintHelp = ContainsHelp(args);
+            if(shouldPrintHelp)
+            {
+                Output.Help();
+            }
+            return shouldPrintHelp;
+        }
 
-            if(!args.Any())
-                return today;
+        private static bool ContainsHelp(string[] args)
+        => args.Intersect(new[] { "?", "h", "-h", "--h", "help", "-help", "--help" }).Any();        
 
-            if (args.Length > 1)
-                Output.Warning($"Multiple arguments provided. Ignoring all arguments after '{args[0]}'...");
+        private static DateOnly ParseArgument(string arg)
+        {
+            var date = TryParseInt(arg) ?? TryParseDateOnly(arg) ?? TryParseDateTime(arg);
+            if (date.HasValue)
+                return date.Value;
 
-            var date = TryParseInt(args[0]) ?? TryParseDateOnly(args[0]) ?? TryParseDateTime(args[0]);
-            if (!date.HasValue)
-                throw new ArgumentException($"Could not parse argument {args[0]}.");
-
-            return today;
+            throw new ArgumentException($"Could not parse argument {arg}.");
         }
 
         private static DateOnly? TryParseInt(string arg)
         {
             var today = DateTime.Today;
-            if (int.TryParse(arg, out var day) && day > 0 && day < 31)
-                return new DateOnly(today.Year, today.Month, day);
 
-            return null;
+            return (int.TryParse(arg, out var day) && day > 0 && day < 31)
+                ? new DateOnly(today.Year, today.Month, day)
+                : null;
         }
 
         private static DateOnly? TryParseDateOnly(string arg)
-        {
-            if (DateOnly.TryParse(arg, out var date))
-                return date;
-
-            return null;
-        }
+            => DateOnly.TryParse(arg, out var date) ? date : null;
 
         private static DateOnly? TryParseDateTime(string arg)
-        {
-            if (DateTime.TryParse(arg, out var datetime))
-                return DateOnly.FromDateTime(datetime);
+            => DateTime.TryParse(arg, out var datetime) ? DateOnly.FromDateTime(datetime) : null;
 
-            return null;
-        }
 
         private static IEnumerable<ISolver> GetSolvers(DateOnly challengeDate)
         {
-            return GetAllSolverImplementations()
-                .Where(st => st.GetCustomAttribute<SolvesChallenge>()?.challengeDate == challengeDate)
+            var solvers = GetAllSolverImplementations()
+                .Where(st => st.GetCustomAttribute<Solves>()?.challengeDate == challengeDate)
                 .Select(st => (ISolver)Activator.CreateInstance(st)!);
+
+            Output.Line($"Found {solvers.Count()} solvers for {challengeDate}...");
+
+            return solvers;
         }
 
         private static IEnumerable<Type> GetAllSolverImplementations()

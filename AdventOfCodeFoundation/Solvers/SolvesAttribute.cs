@@ -1,11 +1,11 @@
-﻿namespace UnionsAoCFoundation.Plumbing
+﻿namespace AdventOfCodeFoundation.Solvers
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public class SolvesChallenge : Attribute
+    public class Solves : Attribute
     {
         public readonly DateOnly challengeDate;
 
-        public SolvesChallenge(string challengeDate)
+        public Solves(string challengeDate)
         {
             this.challengeDate = DateOnly.Parse(challengeDate);
         }

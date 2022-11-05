@@ -1,30 +1,30 @@
 ﻿using AdventOfCodeFoundation.IO;
-using UnionsAoCFoundation.Plumbing;
 
 namespace AdventOfCodeFoundation.Solvers._2015
 {
-    [SolvesChallenge("2015/12/1")]
+    [Solves("2015/12/1")]
     internal class Day1Solver2015 : ISolver
     {
-        async Task<string> ISolver.SolvePartOne(Input input)
+        public async Task<string> SolvePartOne(Input input)
         {
-            return (await input.GetRawInput()).Aggregate(0, (s, c) => c == '(' ? s + 1 : s - 1).ToString();
+            return (await input.GetRawInput()).Aggregate(0, (s, c) => s + ParseChar(c)).ToString();
         }
 
-        async Task<string> ISolver.SolvePartTwo(Input input)
+        public async Task<string> SolvePartTwo(Input input)
         {
             var instructions = await input.GetRawInput();
-            var floor = 0;
-            for(var i = 0; i < instructions.Length; i++)
-            {
-                floor += instructions[i] == '(' ? 1 : -1;
-                if(floor < 0)
-                {
-                    return $"{i + 1}";
-                }
-            }
+            var res = FindCellar(instructions);
 
-            return "No solution found.";
+            return res.HasValue ? $"{res.Value + 1}" : "No solution found.";
         }
+
+        private static int? FindCellar(string instructions)
+        {
+            var floor = 0;
+            var insts = instructions.TakeWhile(c => (floor += ParseChar(c)) >= 0).ToList();            
+            return floor < 0 ? insts.Count : null;
+        }
+
+        private static int ParseChar(char c) => c == '(' ? 1 : -1;
     }
 }
