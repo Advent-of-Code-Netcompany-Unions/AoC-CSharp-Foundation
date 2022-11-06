@@ -14,7 +14,8 @@ namespace AdventOfCodeFoundation
             var challengeDate = GetChallengeDate(args);
             var solvers = GetSolvers(challengeDate);
 
-            await Task.WhenAll(solvers.Select(async solver => await solver.Run(challengeDate)));       
+            foreach (var solver in solvers)
+                await solver.Run(challengeDate);            
         }
 
         private static DateOnly GetChallengeDate(string[] args)
