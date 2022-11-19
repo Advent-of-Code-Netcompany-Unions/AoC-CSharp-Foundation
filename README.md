@@ -1,4 +1,4 @@
-# AoC-csharp-foundation
+# AoC-Csharp-Foundation
 A .NET 7 foundation project for solving Advent of Code challenges in C#.
 Features:
 - Plumbing and scaffolding in place - you just need to implement the actual solvers
