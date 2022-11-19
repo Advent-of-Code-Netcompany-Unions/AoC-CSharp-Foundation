@@ -20,4 +20,4 @@ That's it, when you run the application, it will automatically read input and se
 - *.\AdventOfCodeFoundation\bin\Debug\net7.0\AdventOfCodeFoundation.exe 2015-12-01* will attempt to solve the challenge for december 1st, 2015
 
 ## But you promised examples!
-Sure, check out the ExampleSolver implementation for a Hello, World! example which also demonstrates how to implement required async signature without any async functionality present. You can also have a look at the Day1Solver2015, which solves the first Advent of Code challenge published - it obivously contain minor spoilers.
+Sure, check out the ExampleSolver implementation for a Hello, World! example which also demonstrates how to implement required async method signature without any async functionality in the method body. You can also have a look at the Day1Solver2015, which solves the first Advent of Code challenge published - it obivously contain minor spoilers.
